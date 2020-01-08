@@ -6,13 +6,43 @@
  */
 
 /**
- * Implements hook_page_build().
+ * Implements hook_element_info().
  */
-function audiofile_page_build(&$page) {
+function audiofile_element_info() {
+  $types['audiofile'] = [
+    '#input' => TRUE,
+    '#process' => ['audiofile_element_process'],
+    '#element_validate' => ['audiofile_element_validate'],
+    '#theme_wrappers' => ['form_element'],
+    '#time_limit' => 300,
+    '#upload_location' => NULL,
+    '#upload_validators' => [
+      'file_validate_extensions' => ['wav'],
+    ],
+    '#default_value' => NULL,
+  ];
+  return $types;
+}
+
+/**
+ * Form-API process callback for audiofile elements.
+ *
+ * @see audiofile_element_info()
+ */
+function audiofile_element_process(array $element, array &$form_state, array $form) {
   $module_path = drupal_get_path('module', 'audiofile');
-  $page['content']['#attached']['js'][$module_path . '/audiofile.min.js'] = [
+  $element['#attached']['js'][$module_path . '/audiofile.min.js'] = [
     'scope' => 'header',
     'group' => JS_LIBRARY,
     'preprocess' => FALSE,
   ];
+  return $element;
+}
+
+/**
+ * Element validate callback for audiofile elements.
+ *
+ * @see audiofile_element_info()
+ */
+function audiofile_element_validate(array $element, array &$form_state, array $form) {
 }
