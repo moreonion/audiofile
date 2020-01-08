@@ -1,0 +1,39 @@
+{
+  "name": "drupal-audiofile",
+  "version": "0.0.0",
+  "description": "JavaScript behavior for the MediaRecorder integration.",
+  "scripts": {
+    "dev": "parcel build --no-minify src/main.js",
+    "dist": "parcel build --no-source-maps src/main.js",
+    "drupal": "yarn run dist && cp dist/main.js ../audiofile.min.js",
+    "lint": "eslint src",
+    "fix": "eslint --fix src"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
+    "babel-eslint": "^10.0.3",
+    "core-js": "3",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "husky": "^4.0.1",
+    "lint-staged": "^9.5.0",
+    "parcel": "^2.0.0-alpha.3.2"
+  },
+  "dependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn run lint-staged && yarn run dist"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint"
+    ]
+  }
+}
