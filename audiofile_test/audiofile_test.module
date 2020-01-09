@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations and callbacks for the audiofile_test module.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function audiofile_test_menu() {
+  $items['test/audiofile-form'] = [
+    'title' => 'Audiofile upload test',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => ['audiofile_test_form'],
+    'access callback' => TRUE,
+  ];
+  return $items;
+}
+
+/**
+ * Form callback for the audiofile test form.
+ */
+function audiofile_test_form(array $form, array &$form_state) {
+  $form['recorder'] = [
+    '#title' => t('Audio recorder'),
+    '#type' => 'audiofile',
+  ];
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = [
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  ];
+  return $form;
+}

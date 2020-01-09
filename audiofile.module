@@ -20,6 +20,7 @@ function audiofile_element_info() {
       'file_validate_extensions' => ['wav'],
     ],
     '#default_value' => NULL,
+    '#theme_wrappers' => ['container'],
   ];
   return $types;
 }
@@ -36,6 +37,13 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
     'group' => JS_LIBRARY,
     'preprocess' => FALSE,
   ];
+
+  // Add a hidden fid field for storing the returned recorded file using ajax.
+  $element['fid'] = array(
+    '#type' => 'hidden',
+    '#value' => $element['#default_value'],
+  );
+
   return $element;
 }
 

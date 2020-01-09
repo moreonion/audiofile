@@ -1,3 +1,4 @@
 name = Audiofile
 description = Provide form-API elements and webform components for recording and uploading audio files.
 core = 7.x
+php = 7.0

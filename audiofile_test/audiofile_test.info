@@ -1,0 +1,5 @@
+name = Test module for the audio file module
+description = Test content and callbacks
+core = 7.x
+
+dependencies[] = audiofile
