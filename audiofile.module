@@ -6,6 +6,19 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function audiofile_menu() {
+  $items['audiofile/ajax'] = [
+    'page callback' => 'audiofile_ajax_upload',
+    'delivery callback' => 'little_helpers_deliver_json',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+  return $items;
+}
+
+/**
  * Implements hook_element_info().
  */
 function audiofile_element_info() {
@@ -15,12 +28,12 @@ function audiofile_element_info() {
     '#element_validate' => ['audiofile_element_validate'],
     '#theme_wrappers' => ['form_element'],
     '#time_limit' => 300,
-    '#upload_location' => NULL,
+    '#upload_location' => 'public://audiofile',
     '#upload_validators' => [
       'file_validate_extensions' => ['wav'],
     ],
     '#default_value' => NULL,
-    '#theme_wrappers' => ['container'],
+    '#theme_wrappers' => ['container', 'form_element'],
   ];
   return $types;
 }
@@ -32,17 +45,34 @@ function audiofile_element_info() {
  */
 function audiofile_element_process(array $element, array &$form_state, array $form) {
   $module_path = drupal_get_path('module', 'audiofile');
+  $element['#tree'] = TRUE;
+  $element['#attributes']['class'][] = 'audiofile-recorder';
   $element['#attached']['js'][$module_path . '/audiofile.min.js'] = [
     'scope' => 'header',
     'group' => JS_LIBRARY,
     'preprocess' => FALSE,
   ];
 
+  $file = NULL;
+  if (!empty($element['#default_value']) && is_numeric($element['#default_value'])) {
+    $file = file_load($element['#default_value']);
+  }
+
   // Add a hidden fid field for storing the returned recorded file using ajax.
-  $element['fid'] = array(
+  $element['fid'] = [
     '#type' => 'hidden',
-    '#value' => $element['#default_value'],
-  );
+    '#value' => $file ? $file->fid : '',
+  ];
+  $element['url'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? file_create_url($file->uri) : '',
+  ];
+  $form_state['audiofile'][$element['#id']] = [
+    'validators' => $element['#upload_validators'],
+  ];
+
+  // We need the form cache in order to process ajax uploads.
+  $form_state['cache'] = TRUE;
 
   return $element;
 }
@@ -53,4 +83,34 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
  * @see audiofile_element_info()
  */
 function audiofile_element_validate(array $element, array &$form_state, array $form) {
+  $fid = $element['#value']['fid'];
+
+  // Check required property based on the FID.
+  if ($element['#required'] && empty($fid)) {
+    form_error($element, t('%name is a required field.', array('%name' => $element['#title'])));
+  }
+}
+
+/**
+ * Page callback: Upload a file.
+ */
+function audiofile_ajax_upload() {
+  // We only load this here so we can read the config from the form_state.
+  // The form_state isn’t modified there is no need to update the form_build_id.
+  list($form, $form_state, $form_id, $form_build_id, $commands) = ajax_get_form();
+
+  if (empty($_POST['id']) || !($settings = $form_state['audiofile'][$_POST['id']] ?? NULL)) {
+    // Error: No settings.
+  }
+
+  if (!($file = file_save_upload('content', $settings['validators']))) {
+    drupal_get_messages();
+    form_clear_error();
+    return ['error' => 'Uploaded file could not be saved to temporary folder.'];
+  }
+
+  return [
+    'fid' => $file->fid,
+    'url' => file_create_url($file->uri),
+  ];
 }
