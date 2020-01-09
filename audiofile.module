@@ -4,3 +4,15 @@
  * @file
  * Hook implementations for the audiofile module.
  */
+
+/**
+ * Implements hook_page_build().
+ */
+function audiofile_page_build(&$page) {
+  $module_path = drupal_get_path('module', 'audiofile');
+  $page['content']['#attached']['js'][$module_path . '/audiofile.min.js'] = [
+    'scope' => 'header',
+    'group' => JS_LIBRARY,
+    'preprocess' => FALSE,
+  ];
+}
