@@ -26,7 +26,6 @@ function audiofile_element_info() {
     '#input' => TRUE,
     '#process' => ['audiofile_element_process'],
     '#element_validate' => ['audiofile_element_validate'],
-    '#theme_wrappers' => ['form_element'],
     '#time_limit' => 300,
     '#upload_location' => 'public://audiofile',
     '#upload_validators' => [
@@ -113,4 +112,19 @@ function audiofile_ajax_upload() {
     'fid' => $file->fid,
     'url' => file_create_url($file->uri),
   ];
+}
+
+/**
+ * Implements hook_webform_component_info().
+ */
+function audiofile_webform_component_info() {
+  $components['audiofile'] = [
+    'label' => t('Audio recorder'),
+    'description' => t('Allows users to record and upload audio files.'),
+    'features' => [
+      'file_usage' => TRUE,
+    ],
+    'file' => 'audiofile.webform.inc',
+  ];
+  return $components;
 }
