@@ -1,6 +1,7 @@
 /* global Drupal, jQuery */
 
 import MediaRecorder from 'audio-recorder-polyfill'
+import { Audiofile } from './audiofile'
 
 var $ = jQuery
 
@@ -13,10 +14,16 @@ Drupal.behaviors.audiofile = {}
 Drupal.behaviors.audiofile.attach = function (context, settings) {
   $('.audiofile-recorder', context).each((id, element) => {
     let form = $(element).closest('form').get(0)
+    let widget = new Audiofile($(element), 'initial')
+    widget.bind()
+
     $('<input type="button" value="upload stuff"/>').click(() => {
-      let blob = new Blob(['Hello, world!'], { type: 'text/plain' })
+      if (!widget.recordingApproved) {
+        return
+      }
+      let blob = widget.getBlobData()
       let data = new FormData()
-      data.append('files[content]', blob, 'test.wav')
+      data.append('files[content]', blob, widget.getFilename())
       data.append('id', element.id)
       data.append('form_build_id', form['form_build_id'].value)
       $.ajax({
