@@ -169,3 +169,30 @@ function _webform_csv_headers_audiofile($component, $export_options) {
 function _webform_csv_data_audiofile($component, $export_options, $value) {
   return webform_component_invoke('file', 'csv_headers', $component, $export_options, $value);
 }
+
+/**
+ * Implements _webform_form_builder_map_<webform-component>().
+ */
+function _webform_form_builder_map_audiofile() {
+  return [
+    'form_builder_type' => 'audiofile',
+    'properties' => [
+      'webform_file_extensions' => [
+        'form_parents' => ['validation', 'extensions'],
+        'storage_parents' => ['extra', 'filtering'],
+      ],
+      'webform_file_size' => [
+        'form_parents' => ['validation', 'size'],
+        'storage_parents' => ['extra', 'filtering', 'size'],
+      ],
+      'webform_file_directory' => [
+        'form_parents' => ['extra', 'directory'],
+        'storage_parents' => ['extra', 'directory'],
+      ],
+      'webform_file_scheme' => [
+        'form_parents' => ['extra', 'scheme'],
+        'storage_parents' => ['extra', 'scheme'],
+      ],
+    ],
+  ];
+}

@@ -123,8 +123,28 @@ function audiofile_webform_component_info() {
     'description' => t('Allows users to record and upload audio files.'),
     'features' => [
       'file_usage' => TRUE,
+      'default_value' => FALSE,
     ],
     'file' => 'audiofile.webform.inc',
   ];
   return $components;
+}
+
+/**
+ * Implements hook_form_builder_element_types().
+ */
+function audiofile_form_builder_element_types($form_type, $form_id) {
+  if ($form_type != 'webform') {
+    return;
+  }
+  module_load_include('components.inc', 'form_builder_webform');
+  $map = _form_builder_webform_property_map('audiofile');
+  $fields['audiofile'] = [
+    'title' => t('Audio recorder'),
+    'properties' => array_keys($map['properties']),
+    'default' => ['#form_builder' => ['element_type' => 'audiofile']],
+  ];
+  $fields['audiofile']['default'] += _form_builder_webform_default('audiofile');
+
+  return $fields;
 }
