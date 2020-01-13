@@ -27,6 +27,7 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
         contentType: false,
         success: (data) => {
           $('input[name$="[fid]"]', element).val(data['fid'])
+          $('input[name$="[signature]"]', element).val(data['signature'])
           $('input[name$="[url]"]', element).val(data['url'])
         }
       })

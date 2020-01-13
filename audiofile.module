@@ -5,6 +5,8 @@
  * Hook implementations for the audiofile module.
  */
 
+use Drupal\audiofile\Element;
+
 /**
  * Implements hook_menu().
  */
@@ -56,11 +58,18 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
   if (!empty($element['#default_value']) && is_numeric($element['#default_value'])) {
     $file = file_load($element['#default_value']);
   }
+  if (!$file && !empty($element['#value'])) {
+    $file = file_load($element['#value']['fid']);
+  }
 
   // Add a hidden fid field for storing the returned recorded file using ajax.
   $element['fid'] = [
     '#type' => 'hidden',
     '#value' => $file ? $file->fid : '',
+  ];
+  $element['signature'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? Element::signFid($file->fid) : '',
   ];
   $element['url'] = [
     '#type' => 'hidden',
@@ -84,10 +93,17 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
 function audiofile_element_validate(array $element, array &$form_state, array $form) {
   $fid = $element['#value']['fid'];
 
+  if (!empty($fid) && !Element::checkSignature($fid, $element['#value']['signature'])) {
+    $fid = '';
+  }
+
   // Check required property based on the FID.
   if ($element['#required'] && empty($fid)) {
     form_error($element, t('%name is a required field.', array('%name' => $element['#title'])));
   }
+
+  $element['#value']['fid'] = $fid;
+  form_set_value($element, $element['#value'], $form_state);
 }
 
 /**
@@ -110,9 +126,11 @@ function audiofile_ajax_upload() {
 
   return [
     'fid' => $file->fid,
+    'signature' => Element::signFid($file->fid),
     'url' => file_create_url($file->uri),
   ];
 }
+
 
 /**
  * Implements hook_webform_component_info().
