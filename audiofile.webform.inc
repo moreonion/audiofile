@@ -61,7 +61,7 @@ function _webform_edit_audiofile($component) {
   unset($edit_file['validation']['extensions']['types']);
   $form['validation']['extensions'] = $edit_file['validation']['extensions'];
   $current_types = $component['extra']['filtering']['types'] ?? $component['extra']['filtering']['types'];
-  $types = ['mp3', 'ogg', 'wav', 'webm'];
+  $types = ['mp3', 'ogg', 'opus', 'wav', 'webm'];
   $form['validation']['extensions']['types']['audio'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Audio'),
