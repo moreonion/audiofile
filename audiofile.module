@@ -5,14 +5,170 @@
  * Hook implementations for the audiofile module.
  */
 
+use Drupal\audiofile\Element;
+
 /**
- * Implements hook_page_build().
+ * Implements hook_menu().
  */
-function audiofile_page_build(&$page) {
+function audiofile_menu() {
+  $items['audiofile/ajax'] = [
+    'page callback' => 'audiofile_ajax_upload',
+    'delivery callback' => 'little_helpers_deliver_json',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  ];
+  return $items;
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function audiofile_element_info() {
+  $types['audiofile'] = [
+    '#input' => TRUE,
+    '#process' => ['audiofile_element_process'],
+    '#element_validate' => ['audiofile_element_validate'],
+    '#time_limit' => 300,
+    '#upload_location' => 'public://audiofile',
+    '#upload_validators' => [
+      'file_validate_extensions' => ['wav'],
+    ],
+    '#default_value' => NULL,
+    '#theme_wrappers' => ['container', 'form_element'],
+  ];
+  return $types;
+}
+
+/**
+ * Form-API process callback for audiofile elements.
+ *
+ * @see audiofile_element_info()
+ */
+function audiofile_element_process(array $element, array &$form_state, array $form) {
   $module_path = drupal_get_path('module', 'audiofile');
-  $page['content']['#attached']['js'][$module_path . '/audiofile.min.js'] = [
+  $element['#tree'] = TRUE;
+  $element['#attributes']['class'][] = 'audiofile-recorder';
+  $element['#attached']['js'][$module_path . '/audiofile.min.js'] = [
     'scope' => 'header',
     'group' => JS_LIBRARY,
     'preprocess' => FALSE,
   ];
+
+  $file = NULL;
+  if (!empty($element['#default_value']) && is_numeric($element['#default_value'])) {
+    $file = file_load($element['#default_value']);
+  }
+  if (!$file && !empty($element['#value'])) {
+    $file = file_load($element['#value']['fid']);
+  }
+
+  // Add a hidden fid field for storing the returned recorded file using ajax.
+  $element['fid'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? $file->fid : '',
+  ];
+  $element['signature'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? Element::signFid($file->fid) : '',
+  ];
+  $element['url'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? file_create_url($file->uri) : '',
+  ];
+  $form_state['audiofile'][$element['#id']] = [
+    'validators' => $element['#upload_validators'],
+  ];
+
+  // We need the form cache in order to process ajax uploads.
+  $form_state['cache'] = TRUE;
+
+  return $element;
+}
+
+/**
+ * Element validate callback for audiofile elements.
+ *
+ * @see audiofile_element_info()
+ */
+function audiofile_element_validate(array $element, array &$form_state, array $form) {
+  $fid = $element['#value']['fid'];
+
+  if (!empty($fid) && !Element::checkSignature($fid, $element['#value']['signature'])) {
+    $fid = '';
+  }
+
+  // Check required property based on the FID.
+  if ($element['#required'] && empty($fid)) {
+    form_error($element, t('%name is a required field.', array('%name' => $element['#title'])));
+  }
+
+  $element['#value']['fid'] = $fid;
+  form_set_value($element, $element['#value'], $form_state);
+}
+
+/**
+ * Page callback: Upload a file.
+ */
+function audiofile_ajax_upload() {
+  // We only load this here so we can read the config from the form_state.
+  // The form_state isn’t modified there is no need to update the form_build_id.
+  list($form, $form_state, $form_id, $form_build_id, $commands) = ajax_get_form();
+
+  if (empty($_POST['id']) || !($settings = $form_state['audiofile'][$_POST['id']] ?? NULL)) {
+    // Error: No settings.
+  }
+
+  if (!empty($_POST['fid']) && !empty($_POST['signature'])) {
+    if (Element::checkSignature($_POST['fid'], $_POST['signature']) && ($old_file = file_load($_POST['fid']))) {
+      file_delete($old_file);
+    }
+  }
+
+  if (!($file = file_save_upload('content', $settings['validators']))) {
+    drupal_get_messages();
+    form_clear_error();
+    return ['error' => 'Uploaded file could not be saved to temporary folder.'];
+  }
+
+  return [
+    'fid' => $file->fid,
+    'signature' => Element::signFid($file->fid),
+    'url' => file_create_url($file->uri),
+  ];
+}
+
+
+/**
+ * Implements hook_webform_component_info().
+ */
+function audiofile_webform_component_info() {
+  $components['audiofile'] = [
+    'label' => t('Audio recorder'),
+    'description' => t('Allows users to record and upload audio files.'),
+    'features' => [
+      'file_usage' => TRUE,
+      'default_value' => FALSE,
+    ],
+    'file' => 'audiofile.webform.inc',
+  ];
+  return $components;
+}
+
+/**
+ * Implements hook_form_builder_element_types().
+ */
+function audiofile_form_builder_element_types($form_type, $form_id) {
+  if ($form_type != 'webform') {
+    return;
+  }
+  module_load_include('components.inc', 'form_builder_webform');
+  $map = _form_builder_webform_property_map('audiofile');
+  $fields['audiofile'] = [
+    'title' => t('Audio recorder'),
+    'properties' => array_keys($map['properties']),
+    'default' => ['#form_builder' => ['element_type' => 'audiofile']],
+  ];
+  $fields['audiofile']['default'] += _form_builder_webform_default('audiofile');
+
+  return $fields;
 }
