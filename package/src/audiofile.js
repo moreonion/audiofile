@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global Drupal, jQuery */
 
 import {
   startHTML,
@@ -67,7 +67,7 @@ class Audiofile {
       this.$wrapper.append($widget)
     }
     // Substitute placeholder text of non-JS notice.
-    $widget.html('<div>Enabled</div>')
+    $widget.html(`<div>${Drupal.t('Enabled')}</div>`)
 
     // Handle 'start' control.
     // Triggers the mic request and starts the recording.
@@ -219,7 +219,7 @@ class Audiofile {
    */
   requestMic () {
     if (typeof navigator.mediaDevices === 'undefined') {
-      this.transitionTo('error', { name: 'Error', message: 'No access to media devices. Maybe not working in a secure context.' })
+      this.transitionTo('error', { name: Drupal.t('Error'), message: Drupal.t('No access to media devices. Maybe not working in a secure context.') })
     }
     else {
       navigator.mediaDevices.getUserMedia({ audio: true, video: false })

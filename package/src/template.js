@@ -1,3 +1,5 @@
+/* global Drupal */
+
 /**
  * HTML template strings.
  *
@@ -40,11 +42,11 @@ export const startHTML = `<button class="control icon-start control-start">${mic
 export const recordingHTML = `<button class="control icon-stop control-stop">${stopSVG}</button>
 <p>Click to stop</p>`
 
-export const playerHTML = `<p><a href="" class="control-reset">Delete and start again</a></p>
+export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delete and start again')}</a></p>
 <audio id="player" controls preload="metadata"></audio>
-<p>Play to listen and check <button class="control-submit">submit</button></p>`
+<p>${Drupal.t('Play to listen and check')} <button class="control-submit">${Drupal.t('Submit')}</button></p>`
 
-export const submittedHTML = `<p>Submitted.</p><p><a href="">Download</a></p>`
+export const submittedHTML = `<p>${Drupal.t('Submitted')}.</p><p><a href="">${Drupal.t('Download')}</a></p>`
 
-export const notAllowedErrorHTML = `<p>Please ensure you have allowed using the microphone.</p>
-<button class="control-start">Request again…</button>`
+export const notAllowedErrorHTML = `<p>${Drupal.t('Please ensure you have allowed using the microphone.')}</p>
+<button class="control-start">${Drupal.t('Request again…')}</button>`
