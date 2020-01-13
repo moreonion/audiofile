@@ -1,5 +1,13 @@
 /* global jQuery */
 
+import {
+  startHTML,
+  recordingHTML,
+  playerHTML,
+  submittedHTML,
+  notAllowedErrorHTML
+} from './template'
+
 const $ = jQuery
 
 /**
@@ -161,21 +169,19 @@ class Audiofile {
    * Render function for state 'initial'.
    */
   renderInitial () {
-    const $markup = $('<div class="control icon-start control-start"></div>')
-    return $markup
+    return $(startHTML)
   }
   /**
    * Render function for state 'recording'.
    */
   renderRecording () {
-    const $markup = $('<div class="control icon-stop control-stop"></div>')
-    return $markup
+    return $(recordingHTML)
   }
   /**
    * Render function for state 'playing'.
    */
   renderPlaying () {
-    const $markup = $('<div>Check and <a href="" class="control-submit">submit</a></div><audio id="player" controls preload="metadata"></audio><div><a href="" class="control-reset">Or start again?</a></div>')
+    const $markup = $(playerHTML)
     $markup.filter('audio').prop('src', this._recordingURL)
     return $markup
   }
@@ -183,7 +189,7 @@ class Audiofile {
    * Render function for state 'submitting'.
    */
   renderSubmitting () {
-    const $markup = $('<div>Submitted. <a href="">Download</span></div>')
+    const $markup = $(submittedHTML)
     $markup.find('a').prop('href', this._recordingURL)
     $markup.find('a').prop('download', this.getFilename())
     return $markup
@@ -198,7 +204,7 @@ class Audiofile {
   renderError (state, error = {}) {
     let $markup = $(`<div>Error</div>`)
     if (error['name'] === 'NotAllowedError') {
-      $markup = $(`<div>Please ensure you have allowed using the microphone.</div><div class="control-start">Request again...</div>`)
+      $markup = $(notAllowedErrorHTML)
     }
     else if (error.name && error.message) {
       $markup = $(`<div>${error.name}: ${error.message}</div>`)
