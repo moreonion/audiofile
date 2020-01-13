@@ -34,12 +34,17 @@ const stopSVG = `
 
 /* ------------ views ---------------------------------------------- */
 
-export const startHTML = `<div class="control icon-start control-start">${micSVG}</div>`
+export const startHTML = `<button class="control icon-start control-start">${micSVG}</button>
+<p>Click to start recording</p>`
 
-export const recordingHTML = `<div class="control icon-stop control-stop">${stopSVG}</div>`
+export const recordingHTML = `<button class="control icon-stop control-stop">${stopSVG}</button>
+<p>Click to stop</p>`
 
-export const playerHTML = `<div>Check and <a href="" class="control-submit">submit</a></div><audio id="player" controls preload="metadata"></audio><div><a href="" class="control-reset">Or start again?</a></div>`
+export const playerHTML = `<p><a href="" class="control-reset">Delete and start again</a></p>
+<audio id="player" controls preload="metadata"></audio>
+<p>Play to listen and check <button class="control-submit">submit</button></p>`
 
-export const submittedHTML = `<div>Submitted. <a href="">Download</a></div>`
+export const submittedHTML = `<p>Submitted.</p><p><a href="">Download</a></p>`
 
-export const notAllowedErrorHTML = `<div>Please ensure you have allowed using the microphone.</div><div class="control-start">Request again…</div>`
+export const notAllowedErrorHTML = `<p>Please ensure you have allowed using the microphone.</p>
+<button class="control-start">Request again…</button>`

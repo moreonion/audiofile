@@ -16,12 +16,17 @@ $control-color-stop: #f33;
   justify-content: center;
   padding: 1rem;
 
+  button {
+    cursor: pointer;
+  }
+
   .control {
     display: flex;
     width: $control-size;
     height: $control-size;
     align-items: center;
     justify-content: center;
+    border: none;
     margin: 0 auto;
     background-color: $control-background-color;
     border-radius: 50%;
