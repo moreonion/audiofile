@@ -17,7 +17,6 @@ const micSVG = `
 <svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 352 512"
-  preserveAspectRatio="xMidYMid meet"
 >
   <path
     id="micIcon"
@@ -31,7 +30,7 @@ const stopSVG = `
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 10 10"
 >
-  <rect x="1" y="1" width="8" height="8" fill="currentColor" id="stopIcon" />
+  <rect x="2" y="2" width="6" height="6" fill="currentColor" id="stopIcon" />
 </svg>`
 
 /* ------------ views ---------------------------------------------- */

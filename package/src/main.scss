@@ -5,9 +5,9 @@
 
 $control-size: 4rem;
 $control-icon-size: 2rem;
-$control-background-color: #ddd;
-$control-color-default: #333;
-$control-color-stop: #f33;
+$control-background-color: #fff;
+$control-color-default: #555;
+$control-color-stop: #f55;
 
 .audiofile-recorder {
   display: flex;
@@ -26,7 +26,8 @@ $control-color-stop: #f33;
     height: $control-size;
     align-items: center;
     justify-content: center;
-    border: none;
+    padding: 0;
+    border: 0.1rem solid;
     margin: 0 auto;
     background-color: $control-background-color;
     border-radius: 50%;
@@ -37,9 +38,27 @@ $control-color-stop: #f33;
     }
   }
   .icon-start {
+    border-color: $control-color-default;
     color: $control-color-default;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-color: $control-color-stop;
+      background-color: $control-background-color;
+      color: $control-color-stop;
+    }
   }
   .icon-stop {
+    border-color: $control-color-stop;
     color: $control-color-stop;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-color: $control-color-stop;
+      background-color: $control-background-color;
+      color: $control-color-stop;
+    }
   }
 }
