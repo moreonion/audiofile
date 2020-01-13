@@ -118,6 +118,12 @@ function audiofile_ajax_upload() {
     // Error: No settings.
   }
 
+  if (!empty($_POST['fid']) && !empty($_POST['signature'])) {
+    if (Element::checkSignature($_POST['fid'], $_POST['signature']) && ($old_file = file_load($_POST['fid']))) {
+      file_delete($old_file);
+    }
+  }
+
   if (!($file = file_save_upload('content', $settings['validators']))) {
     drupal_get_messages();
     form_clear_error();
