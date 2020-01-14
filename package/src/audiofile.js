@@ -1,5 +1,6 @@
 /* global Drupal, jQuery */
 
+import Countdown from './countdown'
 import {
   startHTML,
   recordingHTML,
@@ -46,9 +47,12 @@ class Audiofile {
     // It's `audio/ogg` for native recording of Firefox, `audio/webm` for
     // Chrome, and `audio/wav` if the polyfill is used.
     this.mediaType = null
+    // Maximum length of the recoding in milliseconds.
+    this.mediaMaxLength = 300000
+    // Countdown object to indicate when mediaMaxLength will be reached.
+    this.countdown = null
     // Whether the users approved the recording for submission.
     this.recordingApproved = false
-
     // Internal store for (time-)sliced recorder chunks.
     this._recordedChunks = []
     // The resulting Blob of the recording. type set to this.mediaType.
@@ -177,12 +181,16 @@ class Audiofile {
    * Render function for state 'recording'.
    */
   renderRecording () {
-    return $(recordingHTML)
+    const $markup = $(recordingHTML)
+    this.countdown = new Countdown($markup.find('.countdown'), this.mediaMaxLength)
+    this.countdown.start()
+    return $markup
   }
   /**
    * Render function for state 'playing'.
    */
   renderPlaying () {
+    this.countdown.stop()
     const $markup = $(playerHTML)
     $markup.filter('audio').prop('src', this._recordingURL)
     return $markup
