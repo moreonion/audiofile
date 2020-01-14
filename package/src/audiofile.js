@@ -59,6 +59,15 @@ class Audiofile {
     this._recordedBlob = null
     // Data URL of the Blob.
     this._recordingURL = null
+    // Timer used to capture the recording duration.
+    this._recordingTimer = null
+    // Recording duration. This get's incremented in steps of 1000ms.
+    //
+    // NB: This value might be a bit off the real duration of the media Blob,
+    // but it is accurate enough for the recording timer.
+    // There is no other feasible/quick way to get an accurate duration of a
+    // recording *during* recording time.
+    this._currentRecordingLength = 0
   }
   /**
    * Bind the Audiofile to a wrapper.
@@ -183,14 +192,12 @@ class Audiofile {
   renderRecording () {
     const $markup = $(recordingHTML)
     this.countdown = new Countdown($markup.find('.countdown'), this.mediaMaxLength)
-    this.countdown.start()
     return $markup
   }
   /**
    * Render function for state 'playing'.
    */
   renderPlaying () {
-    this.countdown.stop()
     const $markup = $(playerHTML)
     $markup.filter('audio').prop('src', this._recordingURL)
     return $markup
@@ -285,6 +292,21 @@ class Audiofile {
     // now we have successfully captured a MediaStream
     this.recorder = new MediaRecorder(this.stream)
 
+    // Set up the timer for updating the recording time
+    // and the Countdown element.
+    this._recordingTimer = setInterval(() => {
+      // Only increment if we are actually recording.
+      // Do not increment if we are in state "paused".
+      if (this.recorderState === 'recording') {
+        this._currentRecordingLength += 1000
+      }
+      let timeLeft = this.mediaMaxLength - this._currentRecordingLength
+      this.countdown.update(timeLeft)
+      if (timeLeft <= 0) {
+        this.recorder.stop() // This will also reset this timer
+      }
+    }, 1000)
+
     // Deal with available media stream data from the recorder.
     this.recorder.addEventListener('dataavailable', (e) => {
       // Save actual media type of recording.
@@ -308,6 +330,8 @@ class Audiofile {
       this._recordingURL = URL.createObjectURL(this._recordedBlob)
       // Reset chunks for next recording.
       this._recordedChunks = []
+      // Clear the timer.
+      clearInterval(this._recordingTimer)
 
       // Release the mic again.
       this.releaseMic()

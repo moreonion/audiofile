@@ -13,37 +13,20 @@ export default class Countdown {
   constructor ($el, time) {
     // The countdown element.
     this.$el = $el
-    // The time left.
     this.time = time
-    // The actual countdown.
-    this._countdown = null
-  }
 
-  /**
-   * Start the countdown.
-   */
-  start () {
-    this._countdown = setInterval(() => {
-      this.time -= 1000
-      this.update()
-      // Stop countdown at 0.
-      if (this.time < 1000) {
-        this.stop()
-      }
-    }, 1000)
-  }
-
-  /**
-   * Stop (or pause) the countdown.
-   */
-  stop () {
-    clearInterval(this._countdown)
+    // initialize markup
+    this.update(this.time)
   }
 
   /**
    * Write the time left to the countdown element.
+   *
+   * @param {number} time The time (in milliseconds) to display.
    */
-  update () {
+  update (time) {
+    this.time = time
+
     let minutes = 0
     let seconds = 0
 
