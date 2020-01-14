@@ -5,6 +5,8 @@ import {
   recordingHTML,
   playerHTML,
   submittedHTML,
+  defaultErrorHTML,
+  notFoundErrorHTML,
   notAllowedErrorHTML
 } from './template'
 
@@ -202,9 +204,12 @@ class Audiofile {
    * properties.
    */
   renderError (state, error = {}) {
-    let $markup = $(`<div>Error</div>`)
+    let $markup = $(defaultErrorHTML)
     if (error['name'] === 'NotAllowedError') {
       $markup = $(notAllowedErrorHTML)
+    }
+    else if (error['name'] === 'NotFoundError') {
+      $markup = $(notFoundErrorHTML)
     }
     else if (error.name && error.message) {
       $markup = $(`<div>${error.name}: ${error.message}</div>`)

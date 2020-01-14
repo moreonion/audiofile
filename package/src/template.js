@@ -47,5 +47,11 @@ export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delet
 
 export const submittedHTML = `<p>${Drupal.t('Submitted')}.</p><p><a href="">${Drupal.t('Download')}</a></p>`
 
+export const defaultErrorHTML = `<p>${Drupal.t('There seems to be a problem with the microphone. Please ensure that there is a microphone connected and you have allowed using it.')}</p>
+<button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
+
+export const notFoundErrorHTML = `<p>${Drupal.t('Please ensure that there is a microphone connected.')}</p>
+<button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
+
 export const notAllowedErrorHTML = `<p>${Drupal.t('Please ensure you have allowed using the microphone.')}</p>
 <button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
