@@ -76,7 +76,7 @@ class Audiofile {
     // See below.
     $widget.on('click', '.control-start', () => {
       // Ensure we have access to the mic.
-      this.requestMic()
+      this.startRecording()
     })
     // Handle 'stop' control.
     // Triggers the stop handler of the recorder which save the Blob.
@@ -219,30 +219,62 @@ class Audiofile {
   /**
    * Request the microphone from the user.
    *
-   * If successful starts the recording.
+   * If successful sets this.stream.
    * If failed renders an error.
+   *
+   * Returns a promise. Promise resolves to true or false (success).
    */
   requestMic () {
-    if (typeof navigator.mediaDevices === 'undefined') {
-      this.transitionTo('error', { name: Drupal.t('Error'), message: Drupal.t('No access to media devices. Maybe not working in a secure context.') })
-    }
-    else {
-      navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-        .then(stream => this.handleMicRequestSuccess(stream))
-        .catch(err => this.handleMicRequestError(err))
-    }
+    return navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      .then(stream => this.handleMicRequestSuccess(stream))
+      .catch(err => this.handleMicRequestError(err))
   }
   /**
    * Handle a successful microphone request.
    *
-   * Save the stream and recorder in properties.
-   * Starts the recording.
-   * Does the recorder event handling setup.
+   * Save the stream in the properties.
    *
    * @param {MediaStream} stream The media stream.
    */
   handleMicRequestSuccess (stream) {
     this.stream = stream
+    return true
+  }
+  /**
+   * Handle failed microphone request.
+   *
+   * For possible errors see
+   * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+   *
+   * @param {object} err The error object.
+   */
+  handleMicRequestError (err) {
+    this.transitionTo('error', { name: err.name, msg: err.message })
+    return false
+  }
+  /**
+   * Start a recording.
+   *
+   * Requests the mic and waits for the result.
+   * Starts the recording.
+   * Does the recorder event handling setup.
+   */
+  async startRecording () {
+    if (typeof navigator.mediaDevices === 'undefined') {
+      this.transitionTo('error', {
+        name: Drupal.t('Error'),
+        message: Drupal.t('No access to media devices. Maybe not working in a secure context.')
+      })
+      return null
+    }
+
+    // request the microphone
+    const success = await this.requestMic()
+    if (!success) {
+      return null
+    }
+
+    // now we have successfully captured a MediaStream
     this.recorder = new MediaRecorder(this.stream)
 
     // Deal with available media stream data from the recorder.
@@ -289,17 +321,6 @@ class Audiofile {
     this.recorder.start()
 
     this.transitionTo('recording')
-  }
-  /**
-   * Handle failed microphone request.
-   *
-   * For possible errors see
-   * https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-   *
-   * @param {object} err The error object.
-   */
-  handleMicRequestError (err) {
-    this.transitionTo('error', { name: err.name, msg: err.message })
   }
   /**
    * Release the microphone again.
