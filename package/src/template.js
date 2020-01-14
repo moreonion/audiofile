@@ -35,17 +35,17 @@ const stopSVG = `
 
 /* ------------ views ---------------------------------------------- */
 
-export const startHTML = `<button class="control icon-start control-start">${micSVG}</button>
+export const startHTML = `<button type="button" class="control icon-start control-start">${micSVG}</button>
 <p>Click to start recording</p>`
 
-export const recordingHTML = `<button class="control icon-stop control-stop">${stopSVG}</button>
+export const recordingHTML = `<button type="button" class="control icon-stop control-stop">${stopSVG}</button>
 <p>Click to stop</p>`
 
 export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delete and start again')}</a></p>
 <audio id="player" controls preload="metadata"></audio>
-<p>${Drupal.t('Play to listen and check')} <button class="control-submit">${Drupal.t('Submit')}</button></p>`
+<p>${Drupal.t('Play to listen and check')} <button type="button" class="control-submit">${Drupal.t('Submit')}</button></p>`
 
 export const submittedHTML = `<p>${Drupal.t('Submitted')}.</p><p><a href="">${Drupal.t('Download')}</a></p>`
 
 export const notAllowedErrorHTML = `<p>${Drupal.t('Please ensure you have allowed using the microphone.')}</p>
-<button class="control-start">${Drupal.t('Request again…')}</button>`
+<button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
