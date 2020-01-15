@@ -100,6 +100,8 @@ class Audiofile {
       e.preventDefault()
       this._recordedBlob = null
       this._recordingURL = null
+      // Trigger event
+      this.$wrapper.trigger('audiofile:reset')
 
       this.transitionTo('initial')
     })

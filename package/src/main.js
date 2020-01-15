@@ -41,5 +41,11 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
         }
       })
     })
+
+    $(element).on('audiofile:reset', (event) => {
+      $fid.val('')
+      $signature.val('')
+      $url.val('')
+    })
   })
 }
