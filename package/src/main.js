@@ -18,6 +18,7 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let $fid = $('input[name$="[fid]"]', element)
     let $signature = $('input[name$="[signature]"]', element)
     let $url = $('input[name$="[url]"]', element)
+    let $submitButtons = $('[type="submit"]:enabled', form)
 
     let requestTracker = new RequestTracker(element)
     let widget = new Audiofile($(element), 'initial')
@@ -52,6 +53,14 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
       $fid.val('')
       $signature.val('')
       $url.val('')
+    })
+
+    // Disable submit button during file upload.
+    $(element).on('request:start', (event, data) => {
+      $submitButtons.prop('disabled', true)
+    })
+    $(element).on('request:end', (event, data) => {
+      $submitButtons.prop('disabled', false)
     })
   })
 }
