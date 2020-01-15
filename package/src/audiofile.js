@@ -1,5 +1,6 @@
 /* global Drupal, jQuery */
 
+import { Mp3Encoder, WavHeader } from 'lamejs'
 import Countdown from './countdown'
 import {
   startHTML,
@@ -57,6 +58,7 @@ class Audiofile {
     this._recordedChunks = []
     // The resulting Blob of the recording. type set to this.mediaType.
     this._recordedBlob = null
+    this._recordedBlobMP3 = null
     // Data URL of the Blob.
     this._recordingURL = null
     // Timer used to capture the recording duration.
@@ -68,6 +70,7 @@ class Audiofile {
     // There is no other feasible/quick way to get an accurate duration of a
     // recording *during* recording time.
     this._currentRecordingLength = 0
+    this._mp3Encoder = new Mp3Encoder(1, 44100, 128)
   }
   /**
    * Bind the Audiofile to a wrapper.
@@ -332,6 +335,21 @@ class Audiofile {
       this._recordedChunks = []
       // Clear the timer.
       clearInterval(this._recordingTimer)
+
+      let mp3Data = []
+      this._recordedBlob.arrayBuffer().then(buffer => {
+        let view = new DataView(buffer)
+        console.log(view)
+        let wav = WavHeader.readHeader(view)
+        console.log('wav', wav)
+        mp3Data.push(this._mp3Encoder.encodeBuffer(view))
+        // consume any leftovers
+        mp3Data.push(this._mp3Encoder.flush())
+        console.log('finished')
+        this._recordedBlobMP3 = new Blob(mp3Data, {type: 'audio/mp3'})
+        let blobURL = URL.createObjectURL(this._recordedBlobMP3)
+        console.log('mp3 blob', blobURL, this._recordedBlobMP3)
+      })
 
       // Release the mic again.
       this.releaseMic()
