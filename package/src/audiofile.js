@@ -332,6 +332,8 @@ class Audiofile {
       this._recordedChunks = []
       // Clear the timer.
       clearInterval(this._recordingTimer)
+      // Trigger event
+      this.$wrapper.trigger('audiofile:recorded', this._recordedBlob)
 
       // Release the mic again.
       this.releaseMic()

@@ -21,11 +21,7 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let widget = new Audiofile($(element), 'initial')
     widget.bind()
 
-    $('<input type="button" value="upload stuff"/>').click(() => {
-      if (!widget.recordingApproved) {
-        return
-      }
-      let blob = widget.getBlobData()
+    $(element).on('audiofile:recorded', (event, blob) => {
       let data = new FormData()
       data.append('files[content]', blob, widget.getFilename())
       data.append('id', element.id)
@@ -44,6 +40,6 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
           $url.val(data['url'])
         }
       })
-    }).appendTo(element)
+    })
   })
 }
