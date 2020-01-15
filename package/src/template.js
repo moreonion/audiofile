@@ -43,9 +43,7 @@ export const recordingHTML = `<button type="button" class="control icon-stop con
 
 export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delete and start again')}</a></p>
 <audio id="player" controls preload="metadata"></audio>
-<p>${Drupal.t('Play to listen and check')} <button type="button" class="control-submit">${Drupal.t('Submit')}</button></p>`
-
-export const submittedHTML = `<p>${Drupal.t('Submitted')}.</p><p><a href="">${Drupal.t('Download')}</a></p>`
+<p>${Drupal.t('Play to listen and check')}</p>`
 
 export const defaultErrorHTML = `<p>${Drupal.t('There seems to be a problem with the microphone. Please ensure that there is a microphone connected and you have allowed using it.')}</p>
 <button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
