@@ -6,17 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Audiofile</title>
     <link rel="stylesheet" href="main.scss">
-    <script type="text/javascript">
-        window.Drupal = {
-          behaviors: {},
-          t: (str, args = {}) => {
-            for (let key in args) {
-              str = str.replace(key, args[key])
-            }
-            return str
-          }
-        }
-    </script>
 </head>
 <body>
     <h1>Audiofile</h1>
@@ -28,6 +17,7 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="env.js"></script>
     <script src="main.js"></script>
     <script type="text/javascript">
         window.Drupal.behaviors.audiofile.attach(window.document, {})
