@@ -61,4 +61,21 @@ $control-color-stop: #f55;
       color: $control-color-stop;
     }
   }
+
+  p .icon-countdown svg {
+    height: 1em;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 }

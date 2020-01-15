@@ -39,7 +39,7 @@ export const startHTML = `<button type="button" class="control icon-start contro
 <p>Click to start recording</p>`
 
 export const recordingHTML = `<button type="button" class="control icon-stop control-stop">${stopSVG}</button>
-<p>Click to stop</p>`
+<p><span class="icon-countdown" aria-hidden="true">${micSVG}&ensp;</span>${Drupal.t('!countdown minutes left', { '!countdown': '<span class="countdown">5:00</span>' })}</p>`
 
 export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delete and start again')}</a></p>
 <audio id="player" controls preload="metadata"></audio>
