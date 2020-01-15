@@ -2,6 +2,7 @@
 
 import MediaRecorder from 'audio-recorder-polyfill'
 import { Audiofile } from './audiofile'
+import RequestTracker from './requesttracker'
 
 var $ = jQuery
 
@@ -18,6 +19,7 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let $signature = $('input[name$="[signature]"]', element)
     let $url = $('input[name$="[url]"]', element)
 
+    let requestTracker = new RequestTracker(element)
     let widget = new Audiofile($(element), 'initial')
     widget.bind()
 
@@ -28,7 +30,7 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
       data.append('form_build_id', form['form_build_id'].value)
       data.append('fid', $fid.val())
       data.append('signature', $signature.val())
-      $.ajax({
+      requestTracker.track($.ajax({
         type: 'POST',
         url: '/audiofile/ajax',
         data: data,
@@ -38,11 +40,15 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
           $fid.val(data['fid'])
           $signature.val(data['signature'])
           $url.val(data['url'])
+        },
+        complete: (data, status) => {
+          requestTracker.done()
         }
-      })
+      }))
     })
 
     $(element).on('audiofile:reset', (event) => {
+      requestTracker.abort()
       $fid.val('')
       $signature.val('')
       $url.val('')
