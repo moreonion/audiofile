@@ -5,6 +5,8 @@
  * Hook implementations for the audiofile module.
  */
 
+use Drupal\audiofile\Element;
+
 /**
  * Implements hook_menu().
  */
@@ -26,7 +28,6 @@ function audiofile_element_info() {
     '#input' => TRUE,
     '#process' => ['audiofile_element_process'],
     '#element_validate' => ['audiofile_element_validate'],
-    '#theme_wrappers' => ['form_element'],
     '#time_limit' => 300,
     '#upload_location' => 'public://audiofile',
     '#upload_validators' => [
@@ -62,6 +63,9 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
   if (!empty($element['#default_value']) && is_numeric($element['#default_value'])) {
     $file = file_load($element['#default_value']);
   }
+  if (!$file && !empty($element['#value'])) {
+    $file = file_load($element['#value']['fid']);
+  }
 
   $element['audiofile-widget'] = [
     '#type' => 'container',
@@ -73,6 +77,10 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
   $element['fid'] = [
     '#type' => 'hidden',
     '#value' => $file ? $file->fid : '',
+  ];
+  $element['signature'] = [
+    '#type' => 'hidden',
+    '#value' => $file ? Element::signFid($file->fid) : '',
   ];
   $element['url'] = [
     '#type' => 'hidden',
@@ -96,10 +104,17 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
 function audiofile_element_validate(array $element, array &$form_state, array $form) {
   $fid = $element['#value']['fid'];
 
+  if (!empty($fid) && !Element::checkSignature($fid, $element['#value']['signature'])) {
+    $fid = '';
+  }
+
   // Check required property based on the FID.
   if ($element['#required'] && empty($fid)) {
     form_error($element, t('%name is a required field.', array('%name' => $element['#title'])));
   }
+
+  $element['#value']['fid'] = $fid;
+  form_set_value($element, $element['#value'], $form_state);
 }
 
 /**
@@ -114,6 +129,12 @@ function audiofile_ajax_upload() {
     // Error: No settings.
   }
 
+  if (!empty($_POST['fid']) && !empty($_POST['signature'])) {
+    if (Element::checkSignature($_POST['fid'], $_POST['signature']) && ($old_file = file_load($_POST['fid']))) {
+      file_delete($old_file);
+    }
+  }
+
   if (!($file = file_save_upload('content', $settings['validators']))) {
     drupal_get_messages();
     form_clear_error();
@@ -122,6 +143,43 @@ function audiofile_ajax_upload() {
 
   return [
     'fid' => $file->fid,
+    'signature' => Element::signFid($file->fid),
     'url' => file_create_url($file->uri),
   ];
+}
+
+
+/**
+ * Implements hook_webform_component_info().
+ */
+function audiofile_webform_component_info() {
+  $components['audiofile'] = [
+    'label' => t('Audio recorder'),
+    'description' => t('Allows users to record and upload audio files.'),
+    'features' => [
+      'file_usage' => TRUE,
+      'default_value' => FALSE,
+    ],
+    'file' => 'audiofile.webform.inc',
+  ];
+  return $components;
+}
+
+/**
+ * Implements hook_form_builder_element_types().
+ */
+function audiofile_form_builder_element_types($form_type, $form_id) {
+  if ($form_type != 'webform') {
+    return;
+  }
+  module_load_include('components.inc', 'form_builder_webform');
+  $map = _form_builder_webform_property_map('audiofile');
+  $fields['audiofile'] = [
+    'title' => t('Audio recorder'),
+    'properties' => array_keys($map['properties']),
+    'default' => ['#form_builder' => ['element_type' => 'audiofile']],
+  ];
+  $fields['audiofile']['default'] += _form_builder_webform_default('audiofile');
+
+  return $fields;
 }

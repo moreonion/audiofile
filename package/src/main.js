@@ -14,6 +14,10 @@ Drupal.behaviors.audiofile = {}
 Drupal.behaviors.audiofile.attach = function (context, settings) {
   $('.audiofile-recorder', context).each((id, element) => {
     let form = $(element).closest('form').get(0)
+    let $fid = $('input[name$="[fid]"]', element)
+    let $signature = $('input[name$="[signature]"]', element)
+    let $url = $('input[name$="[url]"]', element)
+
     let widget = new Audiofile($(element), 'initial')
     widget.bind()
 
@@ -26,6 +30,8 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
       data.append('files[content]', blob, widget.getFilename())
       data.append('id', element.id)
       data.append('form_build_id', form['form_build_id'].value)
+      data.append('fid', $fid.val())
+      data.append('signature', $signature.val())
       $.ajax({
         type: 'POST',
         url: '/audiofile/ajax',
@@ -33,8 +39,9 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
         processData: false,
         contentType: false,
         success: (data) => {
-          $('input[name$="[fid]"]', element).val(data['fid'])
-          $('input[name$="[url]"]', element).val(data['url'])
+          $fid.val(data['fid'])
+          $signature.val(data['signature'])
+          $url.val(data['url'])
         }
       })
     }).appendTo(element)
