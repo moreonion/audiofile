@@ -21,8 +21,8 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let $submitButtons = $('[type="submit"]:enabled', form)
 
     let requestTracker = new RequestTracker(element)
-    let widget = new Audiofile($(element), 'initial')
-    widget.bind()
+    let widget = new Audiofile($(element))
+    widget.bind($url.val() ? 'playing' : 'initial')
 
     $(element).on('audiofile:recorded', (event, blob) => {
       let data = new FormData()
