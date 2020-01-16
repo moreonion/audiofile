@@ -1,5 +1,6 @@
 /* global Drupal, jQuery */
 
+import Plyr from 'plyr'
 import Countdown from './countdown'
 import {
   startHTML,
@@ -50,6 +51,15 @@ class Audiofile {
     this.mediaMaxLength = 120000
     // Countdown object to indicate when mediaMaxLength will be reached.
     this.countdown = null
+    // Plyr object
+    this.player = null
+    // The settings for the Plyr object
+    // https://github.com/sampotts/plyr#options
+    this.plyrSettings = {
+      controls: [
+        'play-large', 'play', 'progress'
+      ]
+    }
 
     // Internal store for (time-)sliced recorder chunks.
     this._recordedChunks = []
@@ -147,6 +157,9 @@ class Audiofile {
   transitionTo (newState, context = {}) {
     let markup = ''
 
+    // Cleanup
+    this.player = null
+
     if (newState === 'initial') {
       markup = this.renderInitial()
     }
@@ -186,8 +199,15 @@ class Audiofile {
    * Render function for state 'playing'.
    */
   renderPlaying () {
-    const $markup = $(playerHTML)
-    $markup.filter('audio').prop('src', this._recordingURL)
+    // Plyr needs a proper document environment for wrapping the audio element
+    // and setting up it's stuff
+    const $markup = $(document.createDocumentFragment())
+    $markup.append($(playerHTML))
+    const $audioEl = $('audio', $markup)
+    $audioEl.prop('src', this._recordingURL)
+    // Plyr can deal with string compatible with querySelector or HTMLElements
+    this.player = new Plyr($audioEl[0], this.plyrSettings)
+
     return $markup
   }
   /**

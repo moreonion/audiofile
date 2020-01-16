@@ -32,6 +32,7 @@
     "husky": "^4.0.1",
     "lint-staged": "^9.5.0",
     "parcel": "^2.0.0-alpha.3.2",
+    "plyr": "^3.5.6",
     "postcss": "^7.0.26",
     "prettier": "^1.19.1",
     "sass": "^1.24.3",
