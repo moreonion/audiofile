@@ -29,12 +29,12 @@ class Audiofile {
    * @param {string} state State to start with. Might need some config before
    * binding.
    */
-  constructor ($wrapper, state = 'initial') {
+  constructor ($wrapper) {
     // The audiofile wrapper, which also includes Drupal AJAX/FAPI specific
     // information, like the FID.
     this.$wrapper = $wrapper
     // The render state of this widget.
-    this.state = state
+    this.state = 'initial'
     // The MediaStream, once microphone access was granted.
     this.stream = null
     // The MediaRecorder associated to the MediaStream.
@@ -73,7 +73,7 @@ class Audiofile {
    * Might need so config before binding, depending on the state the widget
    * should be started with.
    */
-  bind () {
+  bind (state = 'initial') {
     let $widget = this.$wrapper.find('.audiofile-widget')
     if ($widget.length === 0) {
       $widget = $('<div.audiofile-widget></div>')
@@ -107,7 +107,7 @@ class Audiofile {
     })
 
     // Start with the requested state.
-    this.transitionTo(this.state)
+    this.transitionTo(state)
   }
   /**
    * Return audio recording as Blob.
@@ -153,7 +153,7 @@ class Audiofile {
     else if (newState === 'recording' && ['initial', 'playing', 'error'].includes(this.state)) {
       markup = this.renderRecording()
     }
-    else if (newState === 'playing' && ['recording'].includes(this.state)) {
+    else if (newState === 'playing' && ['initial', 'recording'].includes(this.state)) {
       markup = this.renderPlaying()
     }
     else if (newState === 'error') {
