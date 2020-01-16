@@ -53,3 +53,7 @@ export const notFoundErrorHTML = `<p>${Drupal.t('Please ensure that there is a m
 
 export const notAllowedErrorHTML = `<p>${Drupal.t('Please ensure you have allowed using the microphone.')}</p>
 <button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
+
+export const uploadMessageHTML = `<p class="uploading">${Drupal.t('Uploading…')}</p>`
+
+export const uploadErrorHTML = `<p class="upload-error">${Drupal.t('There was a problem uploading your message. Please try recording again.')}</p>`

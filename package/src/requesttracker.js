@@ -35,10 +35,12 @@ export default class RequestTracker {
 
   /**
    * Stops tracking the currently active request.
+   *
+   * @param {string} status The status of the completed request.
    */
-  done () {
+  done (status) {
     if (this.active) {
-      $(this.el).trigger('request:end', this.active)
+      $(this.el).trigger('request:end', this.active, status)
       this.active = null
     }
   }
@@ -49,7 +51,7 @@ export default class RequestTracker {
   abort () {
     if (this.active) {
       this.active.abort()
-      this.done()
+      this.done('abort')
     }
   }
 }

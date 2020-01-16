@@ -291,6 +291,9 @@ class Audiofile {
     // now we have successfully captured a MediaStream
     this.recorder = new MediaRecorder(this.stream)
 
+    // Trigger event
+    this.$wrapper.trigger('audiofile:recording')
+
     // Set up the timer for updating the recording time
     // and the Countdown element.
     this._recordingTimer = setInterval(() => {

@@ -57,3 +57,11 @@ msgstr "Kein Zugriff auf Mediengeräte"
 #: audiofile.min.js:0
 msgid "Your browser might be blocking access to your microphone."
 msgstr "Möglicherweise blockiert Ihr Browser den Zugriff auf das Mikrofon."
+
+#: audiofile.min.js:0
+msgid "Uploading…"
+msgstr "Datei wird hochgeladen…"
+
+#: audiofile.min.js:0
+msgid "There was a problem uploading your message. Please try recording again."
+msgstr "Leider war der Upload nicht erfolgreich. Bitte starten Sie den Vorgang erneut."
