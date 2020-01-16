@@ -47,7 +47,7 @@ class Audiofile {
     // Chrome, and `audio/wav` if the polyfill is used.
     this.mediaType = null
     // Maximum length of the recoding in milliseconds.
-    this.mediaMaxLength = 300000
+    this.mediaMaxLength = 120000
     // Countdown object to indicate when mediaMaxLength will be reached.
     this.countdown = null
 
