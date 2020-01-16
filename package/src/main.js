@@ -2,6 +2,7 @@
 
 import MediaRecorder from 'audio-recorder-polyfill'
 import { Audiofile } from './audiofile'
+import RequestTracker from './requesttracker'
 
 var $ = jQuery
 
@@ -17,22 +18,20 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let $fid = $('input[name$="[fid]"]', element)
     let $signature = $('input[name$="[signature]"]', element)
     let $url = $('input[name$="[url]"]', element)
+    let $submitButtons = $('[type="submit"]:enabled', form)
 
-    let widget = new Audiofile($(element), 'initial')
-    widget.bind()
+    let requestTracker = new RequestTracker(element)
+    let widget = new Audiofile($(element))
+    widget.bind($url.val() ? 'playing' : 'initial')
 
-    $('<input type="button" value="upload stuff"/>').click(() => {
-      if (!widget.recordingApproved) {
-        return
-      }
-      let blob = widget.getBlobData()
+    $(element).on('audiofile:recorded', (event, blob) => {
       let data = new FormData()
       data.append('files[content]', blob, widget.getFilename())
       data.append('id', element.id)
       data.append('form_build_id', form['form_build_id'].value)
       data.append('fid', $fid.val())
       data.append('signature', $signature.val())
-      $.ajax({
+      requestTracker.track($.ajax({
         type: 'POST',
         url: '/audiofile/ajax',
         data: data,
@@ -42,8 +41,26 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
           $fid.val(data['fid'])
           $signature.val(data['signature'])
           $url.val(data['url'])
+        },
+        complete: (data, status) => {
+          requestTracker.done()
         }
-      })
-    }).appendTo(element)
+      }))
+    })
+
+    $(element).on('audiofile:reset', (event) => {
+      requestTracker.abort()
+      $fid.val('')
+      $signature.val('')
+      $url.val('')
+    })
+
+    // Disable submit button during file upload.
+    $(element).on('request:start', (event, data) => {
+      $submitButtons.prop('disabled', true)
+    })
+    $(element).on('request:end', (event, data) => {
+      $submitButtons.prop('disabled', false)
+    })
   })
 }

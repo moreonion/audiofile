@@ -5,7 +5,6 @@ import {
   startHTML,
   recordingHTML,
   playerHTML,
-  submittedHTML,
   defaultErrorHTML,
   notFoundErrorHTML,
   notAllowedErrorHTML
@@ -30,12 +29,12 @@ class Audiofile {
    * @param {string} state State to start with. Might need some config before
    * binding.
    */
-  constructor ($wrapper, state = 'initial') {
+  constructor ($wrapper) {
     // The audiofile wrapper, which also includes Drupal AJAX/FAPI specific
     // information, like the FID.
     this.$wrapper = $wrapper
     // The render state of this widget.
-    this.state = state
+    this.state = 'initial'
     // The MediaStream, once microphone access was granted.
     this.stream = null
     // The MediaRecorder associated to the MediaStream.
@@ -48,11 +47,10 @@ class Audiofile {
     // Chrome, and `audio/wav` if the polyfill is used.
     this.mediaType = null
     // Maximum length of the recoding in milliseconds.
-    this.mediaMaxLength = 300000
+    this.mediaMaxLength = 120000
     // Countdown object to indicate when mediaMaxLength will be reached.
     this.countdown = null
-    // Whether the users approved the recording for submission.
-    this.recordingApproved = false
+
     // Internal store for (time-)sliced recorder chunks.
     this._recordedChunks = []
     // The resulting Blob of the recording. type set to this.mediaType.
@@ -75,7 +73,7 @@ class Audiofile {
    * Might need so config before binding, depending on the state the widget
    * should be started with.
    */
-  bind () {
+  bind (state = 'initial') {
     let $widget = this.$wrapper.find('.audiofile-widget')
     if ($widget.length === 0) {
       $widget = $('<div.audiofile-widget></div>')
@@ -96,27 +94,20 @@ class Audiofile {
     $widget.on('click', '.control-stop', () => {
       this.recorder.stop()
     })
-    // Handle 'submit' control.
-    // Approves a recording.
-    // NB: this might change depending on further development.
-    $widget.on('click', '.control-submit', (e) => {
-      e.preventDefault()
-      this.recordingApproved = true
-      this.transitionTo('submitting')
-    })
     // Handle 'reset' control.
     // Clear Blob, go back to initial state to start over.
     $widget.on('click', '.control-reset', (e) => {
       e.preventDefault()
       this._recordedBlob = null
       this._recordingURL = null
-      this.recordingApproved = false
+      // Trigger event
+      this.$wrapper.trigger('audiofile:reset')
 
       this.transitionTo('initial')
     })
 
     // Start with the requested state.
-    this.transitionTo(this.state)
+    this.transitionTo(state)
   }
   /**
    * Return audio recording as Blob.
@@ -162,11 +153,8 @@ class Audiofile {
     else if (newState === 'recording' && ['initial', 'playing', 'error'].includes(this.state)) {
       markup = this.renderRecording()
     }
-    else if (newState === 'playing' && ['recording'].includes(this.state)) {
+    else if (newState === 'playing' && ['initial', 'recording'].includes(this.state)) {
       markup = this.renderPlaying()
-    }
-    else if (newState === 'submitting' && ['playing'].includes(this.state)) {
-      markup = this.renderSubmitting()
     }
     else if (newState === 'error') {
       markup = this.renderError(newState, context)
@@ -200,15 +188,6 @@ class Audiofile {
   renderPlaying () {
     const $markup = $(playerHTML)
     $markup.filter('audio').prop('src', this._recordingURL)
-    return $markup
-  }
-  /**
-   * Render function for state 'submitting'.
-   */
-  renderSubmitting () {
-    const $markup = $(submittedHTML)
-    $markup.find('a').prop('href', this._recordingURL)
-    $markup.find('a').prop('download', this.getFilename())
     return $markup
   }
   /**
@@ -332,6 +311,8 @@ class Audiofile {
       this._recordedChunks = []
       // Clear the timer.
       clearInterval(this._recordingTimer)
+      // Trigger event
+      this.$wrapper.trigger('audiofile:recorded', this._recordedBlob)
 
       // Release the mic again.
       this.releaseMic()
