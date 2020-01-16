@@ -263,7 +263,7 @@ class Audiofile {
    *
    * @param {object} err The error object.
    */
-  handleMicRequestError (err) {
+  handleMicRequestError (_err) {
     this.transitionTo('error')
     return false
   }
@@ -277,8 +277,8 @@ class Audiofile {
   async startRecording () {
     if (typeof navigator.mediaDevices === 'undefined') {
       this.transitionTo('error', {
-        name: Drupal.t('Error'),
-        message: Drupal.t('No access to media devices.')
+        name: Drupal.t('No access to media devices.'),
+        message: Drupal.t('Your browser might be blocking access to your microphone.')
       })
       return null
     }

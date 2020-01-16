@@ -36,18 +36,18 @@ const stopSVG = `
 /* ------------ views ---------------------------------------------- */
 
 export const startHTML = `<button type="button" class="control icon-start control-start">${micSVG}</button>
-<p>${Drupal.t('Click to start recording<')}/p>`
+<p>${Drupal.t('Start recording<')}/p>`
 
 export const recordingHTML = `<button type="button" class="control icon-stop control-stop">${stopSVG}</button>
 <p><span class="icon-countdown" aria-hidden="true">${micSVG}&ensp;</span>${Drupal.t('!countdown minutes left', { '!countdown': '<span class="countdown">5:00</span>' })}</p>`
 
 export const playerHTML = `<p><a href="" class="control-reset">${Drupal.t('Delete and start again')}</a></p>
 <audio id="player" controls preload="metadata"></audio>
-<p>${Drupal.t('Play to listen and check')} <button type="button" class="control-submit">${Drupal.t('Submit')}</button></p>`
+<p>${Drupal.t('Play back and check')} <button type="button" class="control-submit">${Drupal.t('Submit')}</button></p>`
 
 export const submittedHTML = `<p>${Drupal.t('Submitted')}.</p><p><a href="">${Drupal.t('Download')}</a></p>`
 
-export const defaultErrorHTML = `<p>${Drupal.t('There seems to be a problem with the microphone. Please ensure that there is a microphone connected and you have allowed using it.')}</p>
+export const defaultErrorHTML = `<p>${Drupal.t('There seems to be a problem with the microphone. Please ensure that there is a microphone connected and it is enabled on your device.')}</p>
 <button type="button" class="control-start">${Drupal.t('Request again…')}</button>`
 
 export const notFoundErrorHTML = `<p>${Drupal.t('Please ensure that there is a microphone connected.')}</p>

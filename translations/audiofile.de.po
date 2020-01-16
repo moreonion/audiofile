@@ -15,7 +15,7 @@
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: audiofile.min.js:0
-msgid "Click to start recording"
+msgid "Start recording"
 msgstr "Klicken Sie, um die Aufnahme zu starten."
 
 #: audiofile.min.js:0
@@ -27,11 +27,11 @@ msgid "Delete and start again"
 msgstr "Löschen und neu starten"
 
 #: audiofile.min.js:0
-msgid "Play to listen and check"
+msgid "Play back and check"
 msgstr "Zum Anhören und Überprüfen abspielen."
 
 #: audiofile.min.js:0
-msgid "There seems to be a problem with the microphone. Please ensure that there is a microphone connected and you have allowed using it."
+msgid "There seems to be a problem with the microphone. Please ensure that there is a microphone connected and it is enabled on your device."
 msgstr "Es scheint ein Problem mit dem Mikrofon zu geben. Bitte vergewissern Sie sich, dass ein Mikrofon angeschlossen ist und Sie die Verwendung erlaubt haben."
 
 #: audiofile.min.js:0;0;0
@@ -51,9 +51,9 @@ msgid "Enabled"
 msgstr "Aktiviert"
 
 #: audiofile.min.js:0
-msgid "Error"
-msgstr "Fehler"
+msgid "No access to media devices"
+msgstr "Kein Zugriff auf Mediengeräte"
 
-#: audiofile.min.js:0 package/src/audiofile.js:0
-msgid "No access to media devices."
-msgstr "Kein Zugriff auf Mediengeräte."
+#: audiofile.min.js:0
+msgid "Your browser might be blocking access to your microphone."
+msgstr "Möglicherweise blockiert Ihr Browser den Zugriff auf das Mikrofon."
