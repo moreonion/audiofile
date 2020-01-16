@@ -203,10 +203,12 @@ class Audiofile {
     // and setting up it's stuff
     const $markup = $(document.createDocumentFragment())
     $markup.append($(playerHTML))
-    const $audioEl = $('audio', $markup)
-    $audioEl.prop('src', this._recordingURL)
-    // Plyr can deal with string compatible with querySelector or HTMLElements
-    this.player = new Plyr($audioEl[0], this.plyrSettings)
+    let audioEl = $markup[0].querySelectorAll('audio')[0]
+    if (audioEl) {
+      audioEl.src = this._recordingURL
+      // Plyr can deal with string compatible with querySelector or HTMLElements
+      this.player = new Plyr(audioEl, this.plyrSettings)
+    }
 
     return $markup
   }
