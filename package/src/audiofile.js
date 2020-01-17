@@ -61,12 +61,12 @@ class Audiofile {
       ]
     }
 
+    // URL of the recorded media.
+    this.recordingURL = null
     // Internal store for (time-)sliced recorder chunks.
     this._recordedChunks = []
     // The resulting Blob of the recording. type set to this.mediaType.
     this._recordedBlob = null
-    // Data URL of the Blob.
-    this._recordingURL = null
     // Timer used to capture the recording duration.
     this._recordingTimer = null
     // Recording duration. This get's incremented in steps of 1000ms.
@@ -109,7 +109,7 @@ class Audiofile {
     $widget.on('click', '.control-reset', (e) => {
       e.preventDefault()
       this._recordedBlob = null
-      this._recordingURL = null
+      this.recordingURL = null
       // Trigger event
       this.$wrapper.trigger('audiofile:reset')
 
@@ -205,7 +205,7 @@ class Audiofile {
     $markup.append($(playerHTML))
     let audioEl = $markup[0].querySelectorAll('audio')[0]
     if (audioEl) {
-      audioEl.src = this._recordingURL
+      audioEl.src = this.recordingURL
       // Plyr can deal with string compatible with querySelector or HTMLElements
       this.player = new Plyr(audioEl, this.plyrSettings)
     }
@@ -331,7 +331,7 @@ class Audiofile {
       this.recorderState = this.recorder.state
 
       this._recordedBlob = new Blob(this._recordedChunks, { 'type': this.mediaType })
-      this._recordingURL = URL.createObjectURL(this._recordedBlob)
+      this.recordingURL = URL.createObjectURL(this._recordedBlob)
       // Reset chunks for next recording.
       this._recordedChunks = []
       // Clear the timer.
