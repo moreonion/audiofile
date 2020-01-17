@@ -36,7 +36,9 @@ const stopSVG = `
 /* ------------ views ---------------------------------------------- */
 
 export const startHTML = `<button type="button" class="control icon-start control-start">${micSVG}</button>
-<p>${Drupal.t('Start recording<')}/p>`
+<p>${Drupal.t('Start recording')}</p>`
+
+export const askingHTML = `<p>${Drupal.t('To continue please give permission to access a microphone on your browser.')}</p>`
 
 export const recordingHTML = `<button type="button" class="control icon-stop control-stop">${stopSVG}</button>
 <p><span class="icon-countdown" aria-hidden="true">${micSVG}&ensp;</span>${Drupal.t('!countdown minutes left', { '!countdown': '<span class="countdown">5:00</span>' })}</p>`
