@@ -36,7 +36,7 @@ const stopSVG = `
 /* ------------ views ---------------------------------------------- */
 
 export const startHTML = `<button type="button" class="control icon-start control-start">${micSVG}</button>
-<p>${Drupal.t('Start recording<')}/p>`
+<p>${Drupal.t('Start recording')}</p>`
 
 export const askingHTML = `<p>${Drupal.t('To continue please give permission to access a microphone on your browser.')}</p>`
 
