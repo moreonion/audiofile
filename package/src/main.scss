@@ -14,15 +14,16 @@ $control-color-stop: #f55;
 .audiofile-recorder {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  padding: 1rem;
+  text-align: center;
 
   button {
     cursor: pointer;
   }
 
-  .control {
+  .control,
+  .plyr__control {
     display: flex;
     width: $control-size;
     height: $control-size;
@@ -30,19 +31,17 @@ $control-color-stop: #f55;
     justify-content: center;
     padding: 0;
     border: 0.1rem solid;
+    border-color: $control-color-default;
     margin: 0 auto;
     background-color: $control-background-color;
     border-radius: 50%;
-
-    svg {
-      width: $control-icon-size;
-      height: $control-icon-size;
-    }
+    color: $control-color-default;
+  }
+  .control svg {
+    width: $control-icon-size;
+    height: $control-icon-size;
   }
   .icon-start {
-    border-color: $control-color-default;
-    color: $control-color-default;
-
     &:hover,
     &:focus,
     &:active {
@@ -121,6 +120,66 @@ $control-color-stop: #f55;
     }
     40% {
       box-shadow: 0 1em 0 0;
+    }
+  }
+
+  // Plyr overrides
+  .plyr--audio {
+    width: 100%;
+
+    .plyr__controls {
+      padding: 0;
+      background: transparent;
+
+      .plyr__controls__item {
+        margin-left: 0.5rem;
+      }
+    }
+    .plyr__control {
+      &:hover,
+      &.plyr__tab-focus,
+      &[aria-expanded="true"] {
+        border-color: $control-color-default;
+        background-color: $control-background-color;
+        color: $control-color-default;
+      }
+    }
+    // Overlaid "play" button used for videos
+    .plyr__control--overlaid {
+      display: none;
+    }
+    // progress bar
+    .plyr__progress input[type="range"] {
+      // the inner bar, the not yet played part
+      &::-moz-range-track {
+        height: 0.5rem;
+        background: lighten($control-color-default, 25%);
+      }
+      // the inner bar, the already played part
+      &::-moz-range-progress {
+        height: 0.5rem;
+        color: $control-color-default;
+      }
+      &::-webkit-slider-runnable-track {
+        height: 0.5rem;
+        color: $control-color-default;
+      }
+      // thumb
+      &::-webkit-slider-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: -0.5rem;
+        -webkit-appearence: none;
+      }
+      &::-moz-range-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+      &::-ms-thumb {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-top: 0;
+      }
     }
   }
 }
