@@ -254,7 +254,6 @@ class Audiofile {
    */
   handleMicRequestSuccess (stream) {
     this.stream = stream
-    return true
   }
   /**
    * Handle failed microphone request.
@@ -266,16 +265,13 @@ class Audiofile {
    */
   handleMicRequestError (_err) {
     this.transitionTo('error')
-    return false
   }
   /**
-   * Start a recording.
+   * Initiate recoridng.
    *
    * Requests the mic and waits for the result.
-   * Starts the recording.
-   * Does the recorder event handling setup.
    */
-  async startRecording () {
+  startRecording () {
     if (typeof navigator.mediaDevices === 'undefined') {
       this.transitionTo('error', {
         name: Drupal.t('No access to media devices.'),
@@ -285,11 +281,16 @@ class Audiofile {
     }
 
     // request the microphone
-    const success = await this.requestMic()
-    if (!success) {
-      return null
-    }
-
+    this.requestMic().then(() => {
+      this._startRecording()
+    })
+  }
+  /**
+   * Starts the recording.
+   *
+   * Does the recorder event handling setup.
+   */
+  _startRecording () {
     // now we have successfully captured a MediaStream
     this.recorder = new MediaRecorder(this.stream)
 
