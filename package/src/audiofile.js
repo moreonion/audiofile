@@ -30,10 +30,11 @@ class Audiofile {
    * @param {string} state State to start with. Might need some config before
    * binding.
    */
-  constructor ($wrapper) {
+  constructor ($wrapper, debug = false) {
     // The audiofile wrapper, which also includes Drupal AJAX/FAPI specific
     // information, like the FID.
     this.$wrapper = $wrapper
+    this.debug = debug
     // The render state of this widget.
     this.state = 'initial'
     // The MediaStream, once microphone access was granted.
@@ -155,6 +156,9 @@ class Audiofile {
    * @param {object} context Arbitrary data, usable in render function.
    */
   transitionTo (newState, context = {}) {
+    if (this.debug) {
+      console.log('transition to', newState, 'from', this.state)
+    }
     let markup = ''
 
     // Cleanup
@@ -273,6 +277,9 @@ class Audiofile {
    */
   startRecording () {
     if (typeof navigator.mediaDevices === 'undefined') {
+      if (this.debug) {
+        console.log('no mediaDevices')
+      }
       this.transitionTo('error', {
         name: Drupal.t('No access to media devices.'),
         message: Drupal.t('Your browser might be blocking access to your microphone.')
