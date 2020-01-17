@@ -62,9 +62,9 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
       $submitButtons.prop('disabled', true)
       $uploadMessage.appendTo($(element))
     })
-    $(element).on('request:end', (event, data) => {
+    $(element).on('request:end', (event, data, status) => {
       $submitButtons.prop('disabled', false)
-      if (['success', 'abort'].includes(data.status)) {
+      if (['success', 'abort'].includes(status)) {
         $uploadMessage.detach()
       }
       else {

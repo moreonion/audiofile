@@ -40,7 +40,7 @@ export default class RequestTracker {
    */
   done (status) {
     if (this.active) {
-      $(this.el).trigger('request:end', this.active, status)
+      $(this.el).trigger('request:end', [this.active, status])
       this.active = null
     }
   }
