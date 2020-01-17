@@ -19,6 +19,10 @@ msgid "Start recording"
 msgstr "Klicken Sie, um die Aufnahme zu starten."
 
 #: audiofile.min.js:0
+msgid "To continue please give permission to access a microphone on your browser."
+msgstr "Um fortzufahren, geben Sie bitte erst Ihrem Browser die Erlaubnis, auf ihr Mikrofon zuzugreifen."
+
+#: audiofile.min.js:0
 msgid "!countdown minutes left"
 msgstr "!countdown Minuten verbleiben"
 

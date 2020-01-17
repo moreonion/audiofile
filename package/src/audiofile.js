@@ -4,6 +4,7 @@ import Plyr from 'plyr'
 import Countdown from './countdown'
 import {
   startHTML,
+  askingHTML,
   recordingHTML,
   playerHTML,
   defaultErrorHTML,
@@ -163,7 +164,10 @@ class Audiofile {
     if (newState === 'initial') {
       markup = this.renderInitial()
     }
-    else if (newState === 'recording' && ['initial', 'playing', 'error'].includes(this.state)) {
+    else if (newState === 'asking' && ['initial', 'error'].includes(this.state)) {
+      markup = this.renderAsking()
+    }
+    else if (newState === 'recording' && ['initial', 'asking', 'playing', 'error'].includes(this.state)) {
       markup = this.renderRecording()
     }
     else if (newState === 'playing' && ['initial', 'recording'].includes(this.state)) {
@@ -186,6 +190,12 @@ class Audiofile {
    */
   renderInitial () {
     return $(startHTML)
+  }
+  /**
+   * Render function for state 'asking'.
+   */
+  renderAsking () {
+    return $(askingHTML)
   }
   /**
    * Render function for state 'recording'.
@@ -241,6 +251,7 @@ class Audiofile {
    * Returns a promise. Promise resolves to true or false (success).
    */
   requestMic () {
+    this.transitionTo('asking')
     return navigator.mediaDevices.getUserMedia({ audio: true, video: false })
       .then(stream => this.handleMicRequestSuccess(stream))
       .catch(err => this.handleMicRequestError(err))
