@@ -4,7 +4,9 @@
 # Generated from files:
 #  audiofile.min.js: n/a
 #
-"Project-Id-Version: PROJECT VERSION\n"
+msgid ""
+msgstr ""
+"Project-Id-Version: audiofile-7.x-1.0\n"
 "POT-Creation-Date: 2020-01-16 10:35+0100\n"
 "PO-Revision-Date: 2020-01-16 10:35+0100\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
