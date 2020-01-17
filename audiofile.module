@@ -53,6 +53,11 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
     'group' => JS_LIBRARY,
     'preprocess' => FALSE,
   ];
+  $element['#attached']['css'][$module_path . '/audiofile.min.css'] = [
+    'scope' => 'header',
+    'group' => CSS_DEFAULT,
+    'preprocess' => FALSE,
+  ];
 
   $file = NULL;
   if (!empty($element['#default_value']) && is_numeric($element['#default_value'])) {
@@ -62,6 +67,12 @@ function audiofile_element_process(array $element, array &$form_state, array $fo
     $file = file_load($element['#value']['fid']);
   }
 
+  $element['audiofile-widget'] = [
+    '#type' => 'container',
+    '#attributes' => array(
+      'class' => array('audiofile-widget'),
+    ),
+  ];
   // Add a hidden fid field for storing the returned recorded file using ajax.
   $element['fid'] = [
     '#type' => 'hidden',

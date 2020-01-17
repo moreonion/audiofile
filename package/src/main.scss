@@ -1,0 +1,126 @@
+/**
+ * @file
+ * Styling for the audiofile component.
+ */
+
+@import "plyr/src/sass/plyr";
+
+$control-size: 4rem;
+$control-icon-size: 2rem;
+$control-background-color: #fff;
+$control-color-default: #555;
+$control-color-stop: #f55;
+
+.audiofile-recorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+
+  button {
+    cursor: pointer;
+  }
+
+  .control {
+    display: flex;
+    width: $control-size;
+    height: $control-size;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0.1rem solid;
+    margin: 0 auto;
+    background-color: $control-background-color;
+    border-radius: 50%;
+
+    svg {
+      width: $control-icon-size;
+      height: $control-icon-size;
+    }
+  }
+  .icon-start {
+    border-color: $control-color-default;
+    color: $control-color-default;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-color: $control-color-stop;
+      background-color: $control-background-color;
+      color: $control-color-stop;
+    }
+  }
+  .icon-stop {
+    border-color: $control-color-stop;
+    color: $control-color-stop;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-color: $control-color-stop;
+      background-color: $control-background-color;
+      color: $control-color-stop;
+    }
+  }
+
+  p .icon-countdown svg {
+    height: 1em;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  .uploading {
+    position: relative;
+    top: -1em;
+    color: $control-color-default;
+    text-indent: -9999em;
+
+    &,
+    &:before,
+    &:after {
+      width: 1em;
+      height: 1em;
+      animation: loading 1.8s infinite ease-in-out;
+      animation-delay: -0.16s;
+      animation-fill-mode: both;
+      border-radius: 50%;
+    }
+    &:before,
+    &:after {
+      position: absolute;
+      top: 0;
+      content: "";
+    }
+    &:before {
+      left: -1.5em;
+      animation-delay: -0.32s;
+    }
+    &:after {
+      left: 1.5em;
+      animation-delay: 0s;
+    }
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes loading {
+    0%,
+    80%,
+    100% {
+      box-shadow: 0 1em 0 -0.5em;
+    }
+    40% {
+      box-shadow: 0 1em 0 0;
+    }
+  }
+}

@@ -111,13 +111,6 @@ function _webform_render_audiofile($component, $value = NULL, $filter = TRUE, $s
     '#translatable' => ['title', 'description'],
   ];
 
-  if ($filter) {
-    $element['#description'] = theme('file_upload_help', [
-      'description' => $element['#description'],
-      'upload_validators' => $element['#upload_validators'],
-    ]);
-  }
-
   return $element;
 }
 

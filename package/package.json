@@ -3,17 +3,24 @@
   "version": "0.0.0",
   "description": "JavaScript behavior for the MediaRecorder integration.",
   "scripts": {
-    "dev": "parcel build --no-minify src/main.js",
-    "dist": "parcel build --no-source-maps src/main.js",
-    "drupal": "yarn run dist && cp dist/main.js ../audiofile.min.js",
-    "lint": "eslint src",
-    "fix": "eslint --fix src"
+    "dev": "parcel serve --no-cache src/index.html",
+    "dist:js": "parcel build --no-source-maps src/main.js",
+    "dist:css": "parcel build --no-source-maps src/main.scss",
+    "dist": "yarn run dist:js && yarn run dist:css",
+    "drupal": "yarn run dist && cp dist/main.js ../audiofile.min.js && cp dist/main.css ../audiofile.min.css",
+    "lint:js": "eslint src/**/*.js",
+    "lint:css": "yarn run stylelint 'src/**/*.scss' && yarn run prettier --check 'src/**/*.scss'",
+    "lint": "yarn run lint:js && yarn run lint:css",
+    "fix:js": "eslint --fix src/**/*.js",
+    "fix:css": "yarn run stylelint --fix 'src/**/*.scss' && yarn run prettier --write 'src/**/*.scss'",
+    "fix": "yarn run fix:js && yarn run fix:css"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "@babel/register": "^7.7.7",
     "audio-recorder-polyfill": "^0.1.6",
+    "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
     "core-js": "3",
     "eslint": "^5.16.0",
@@ -24,7 +31,16 @@
     "eslint-plugin-standard": "^4.0.0",
     "husky": "^4.0.1",
     "lint-staged": "^9.5.0",
-    "parcel": "^2.0.0-alpha.3.2"
+    "parcel": "^2.0.0-alpha.3.2",
+    "plyr": "^3.5.6",
+    "postcss": "^7.0.26",
+    "prettier": "^1.19.1",
+    "sass": "^1.24.3",
+    "stylelint": "^12.0.1",
+    "stylelint-config-idiomatic-order": "^8.1.0",
+    "stylelint-config-prettier": "^8.0.0",
+    "stylelint-config-recommended-scss": "^4.1.0",
+    "stylelint-scss": "^3.13.0"
   },
   "dependencies": {},
   "husky": {
@@ -35,6 +51,10 @@
   "lint-staged": {
     "*.js": [
       "eslint"
+    ],
+    "*.scss": [
+      "stylelint",
+      "prettier --check"
     ]
   }
 }

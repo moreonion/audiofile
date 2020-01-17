@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Audiofile</title>
+    <link rel="stylesheet" href="main.scss">
+</head>
+<body>
+    <h1>Audiofile</h1>
+
+    <form action="">
+      <input type="hidden" name="form_build_id" value="1">
+      <div class="audiofile-recorder">
+        <div class="audiofile-widget">
+          <div class="placeholder no-js">This feature needs JavaScript enabled.</div>
+        </div>
+      </div>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="env.js"></script>
+    <script src="main.js"></script>
+    <script type="text/javascript">
+        window.Drupal.behaviors.audiofile.attach(window.document, {})
+    </script>
+</body>
+</html>

@@ -1,6 +1,9 @@
 /* global Drupal, jQuery */
 
 import MediaRecorder from 'audio-recorder-polyfill'
+import { Audiofile } from './audiofile'
+import RequestTracker from './requesttracker'
+import { uploadMessageHTML, uploadErrorHTML } from './template'
 
 var $ = jQuery
 
@@ -16,15 +19,27 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
     let $fid = $('input[name$="[fid]"]', element)
     let $signature = $('input[name$="[signature]"]', element)
     let $url = $('input[name$="[url]"]', element)
-    $('<input type="button" value="upload stuff"/>').click(() => {
-      let blob = new Blob(['Hello, world!'], { type: 'text/plain' })
+    let $submitButtons = $('[type="submit"]:enabled', form)
+    let $uploadMessage = $(uploadMessageHTML)
+
+    let requestTracker = new RequestTracker(element)
+    let widget = new Audiofile($(element))
+    let mediaUrl = $url.val()
+    let mode = mediaUrl ? 'playing' : 'initial'
+    // Set the media URL when starting in playing mode
+    if (mode === 'playing') {
+      widget.recordingURL = mediaUrl
+    }
+    widget.bind(mode)
+
+    $(element).on('audiofile:recorded', (event, blob) => {
       let data = new FormData()
-      data.append('files[content]', blob, 'test.wav')
+      data.append('files[content]', blob, widget.getFilename())
       data.append('id', element.id)
       data.append('form_build_id', form['form_build_id'].value)
       data.append('fid', $fid.val())
       data.append('signature', $signature.val())
-      $.ajax({
+      requestTracker.track($.ajax({
         type: 'POST',
         url: '/audiofile/ajax',
         data: data,
@@ -34,8 +49,38 @@ Drupal.behaviors.audiofile.attach = function (context, settings) {
           $fid.val(data['fid'])
           $signature.val(data['signature'])
           $url.val(data['url'])
+        },
+        complete: (data, status) => {
+          requestTracker.done(status)
         }
-      })
-    }).appendTo(element)
+      }))
+    })
+
+    $(element).on('audiofile:reset', (event) => {
+      requestTracker.abort()
+      $fid.val('')
+      $signature.val('')
+      $url.val('')
+    })
+
+    // Disable submit button during file upload and display message.
+    $(element).on('request:start', (event, data) => {
+      $submitButtons.prop('disabled', true)
+      $uploadMessage.appendTo($(element))
+    })
+    $(element).on('request:end', (event, data, status) => {
+      $submitButtons.prop('disabled', false)
+      if (['success', 'abort'].includes(status)) {
+        $uploadMessage.detach()
+      }
+      else {
+        $uploadMessage.replaceWith($(uploadErrorHTML))
+      }
+    })
+    $(element).on('audiofile:recording', (event) => {
+      // reset upload message
+      $uploadMessage.detach()
+      $uploadMessage = $(uploadMessageHTML)
+    })
   })
 }
