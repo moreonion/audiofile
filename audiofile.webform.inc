@@ -72,6 +72,7 @@ function _webform_edit_audiofile($component) {
 
   $form['extra']['scheme'] = $edit_file['extra']['scheme'];
   $form['extra']['directory'] = $edit_file['extra']['directory'];
+  $form['extra']['rename'] = $edit_file['extra']['rename'];
   return $form;
 }
 
