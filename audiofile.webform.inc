@@ -160,7 +160,14 @@ function _webform_csv_headers_audiofile($component, $export_options) {
  * Implements _webform_csv_data_component().
  */
 function _webform_csv_data_audiofile($component, $export_options, $value) {
-  return webform_component_invoke('file', 'csv_headers', $component, $export_options, $value);
+  return webform_component_invoke('file', 'csv_data', $component, $export_options, $value);
+}
+
+/**
+ * Implements _webform_table_component().
+ */
+function _webform_table_audiofile($component, $value) {
+  return webform_component_invoke('file', 'table', $component, $value);
 }
 
 /**
